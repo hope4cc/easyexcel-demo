@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hope.easyexcel.mapper.ClassMapper">
+
+    <resultMap id="classBaseInfoMap" type="com.hope.easyexcel.entity.Classes">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+    </resultMap>
+    <update id="updateClassSizePlusOne">
+        UPDATE class
+        SET `count` = `count` + 1
+        WHERE id = #{classId}
+    </update>
+
+    <update id="updateClassSize">
+        UPDATE class
+        SET `count` = #{classSize}
+        WHERE id = #{classId}
+    </update>
+
+    <select id="findClassBaseInfoById" resultMap="classBaseInfoMap">
+        SELECT    id, name, count
+        FROM class
+        WHERE id = #{id}
+
+    </select>
+
+    <select id="findClassIdByMajorNameAndClassName" resultType="java.lang.Integer">
+        SELECT class.id
+        FROM major_class
+                 LEFT JOIN class ON classId = class.id
+                 LEFT JOIN major ON majorId = major.id
+        WHERE major.name = #{majorName} AND class.name = #{className}
+    </select>
+
+    <select id="findClassSizeByClassId" resultType="java.lang.Integer">
+        SELECT `count`
+        FROM class
+        WHERE id = #{classId}
+    </select>
+</mapper>

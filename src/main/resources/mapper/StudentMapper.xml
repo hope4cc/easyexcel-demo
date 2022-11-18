@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hope.easyexcel.mapper.StudentMapper">
+
+    <resultMap id="studentBaseInfoMap" type="com.hope.easyexcel.entity.Student">
+        <!-- 定义主键 -->
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="nation" property="nation"/>
+        <result column="sex" property="sex"/>
+        <result column="age" property="age"/>
+        <result column="politicsStatus" property="politicsStatus"/>
+        <result column="idCard" property="idCard"/>
+        <result column="phoneNum" property="phoneNum"/>
+        <result column="email" property="email"/>
+        <result column="avatar" property="avatar"/>
+        <result column="status" property="status"/>
+        <result column="description" property="description"/>
+
+        <!-- 关联的学院对象 -->
+        <association property="academy" column="academyId" fetchType="eager"
+                     select="com.hope.easyexcel.mapper.AcademyMapper.findAcademyBaseInfoById"/>
+        <!-- 关联的专业对象 -->
+        <association property="major" column="majorId" fetchType="eager"
+                     select="com.hope.easyexcel.mapper.MajorMapper.findMajorBaseInfoById"/>
+        <!-- 关联的班级对象 -->
+        <association property="classes" column="classId" fetchType="eager"
+                     select="com.hope.easyexcel.mapper.ClassMapper.findClassBaseInfoById"/>
+    </resultMap>
+    <insert id="insertBatchStudentInfos">
+        INSERT ignore INTO student
+        <trim prefix="(" suffix=")">
+            id, name, nation, sex, age, politicsStatus, idCard, phoneNum, email, academyId, majorId, classId, createTime,status
+        </trim>
+        VALUES
+        <foreach collection="studentExcelData" item="studentInfo" separator=",">
+            (#{studentInfo.id}, #{studentInfo.name}, #{studentInfo.nation}, #{studentInfo.sex}, #{studentInfo.age},
+            #{studentInfo.politicsStatus}, #{studentInfo.idCard}, #{studentInfo.phoneNum}, #{studentInfo.email},
+            #{studentInfo.academyId}, #{studentInfo.majorId}, #{studentInfo.classId}, #{studentInfo.createTime},#{studentInfo.status})
+        </foreach>
+    </insert>
+
+
+    <insert id="insertOneStudentInfo" keyColumn="id">
+        INSERT ignore INTO student
+        <trim prefix="(" suffix=")">
+            id, name, age, sex, email, idCard, academyId, majorId, classId, createTime,status
+        </trim>
+        VALUES (#{id}, #{name},#{age}, #{sex}, #{email}, #{idCard}, #{academyId}, #{majorId}, #{classId}, #{createTime},#{status})
+    </insert>
+
+
+    <select id="findStudentByCondition" resultMap="studentBaseInfoMap">
+        SELECT
+        id, name, nation, sex, age, politicsStatus, idCard, phoneNum, email, avatar, description, createTime, updateTime,status,
+        academyId, majorId, classId
+        FROM student
+    </select>
+</mapper>
